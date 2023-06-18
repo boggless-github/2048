@@ -6,12 +6,12 @@ void Game2048::restart(){
     // set score to 0
     score = 0;
     // make all tiles blank
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < TILES; i++){
         board[i].value = 0;
     }
 
-    // spawn 4 tiles;
-    for(int i = 0; i < 4; i++){
+    // spawn 2 tiles;
+    for(int i = 0; i < 2; i++){
         spawn_tile();
     }
 }
@@ -28,7 +28,9 @@ void Game2048::move_left(){
                 board[INDEX(r,leftmost)].value = value;
             }
             else if(board[INDEX(r,leftmost)].value == value){
-                board[INDEX(r,leftmost)].value = 2 * value;
+                value *= 2;
+                board[INDEX(r,leftmost)].value = value;
+                score += value;
                 leftmost++; // prevent double combinations
             } else{
                 leftmost++;
@@ -51,7 +53,9 @@ void Game2048::move_right(){
                 board[INDEX(r,rightmost)].value = value;
             }
             else if(board[INDEX(r,rightmost)].value == value){
-                board[INDEX(r,rightmost)].value = 2 * value;
+                value *= 2;
+                board[INDEX(r,rightmost)].value = value;
+                score += value;
                 rightmost--; // prevent double combinations
             } else{
                 rightmost--;
@@ -74,7 +78,9 @@ void Game2048::move_up(){
                 board[INDEX(topmost,c)].value = value;
             }
             else if(board[INDEX(topmost,c)].value == value){
-                board[INDEX(topmost,c)].value = 2 * value;
+                value *= 2;
+                board[INDEX(topmost,c)].value = value;
+                score += value;
                 topmost++; // prevent double combinations
             } else{
                 topmost++;
@@ -97,7 +103,9 @@ void Game2048::move_down(){
                 board[INDEX(topmost,c)].value = value;
             }
             else if(board[INDEX(topmost,c)].value == value){
-                board[INDEX(topmost,c)].value = 2 * value;
+                value *= 2;
+                board[INDEX(topmost,c)].value = value;
+                score += value;
                 topmost--; // prevent double combinations
             } else{
                 topmost--;
@@ -131,8 +139,8 @@ int Game2048::get_score(){
     return score;
 }
 
-void Game2048::spawn_tile(){
-    int value = rand() % 4;
+void Game2048::spawn_tile(){ 
+    int value = rand() % 4; // should have 90% chance of 2, 10% chance of 4
     if(value == 0) value = 4;
     else value = 2; 
 
