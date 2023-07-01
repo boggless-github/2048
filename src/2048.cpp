@@ -1,6 +1,7 @@
 #include <iostream>
 #include <random>
 #include <2048.hpp>
+#include <defines.hpp>
 
 void Game2048::restart(){
     // set score to 0
@@ -91,7 +92,7 @@ void Game2048::move_up(){
 
     spawn_tile();
 }
-void Game2048::move_down(){
+void Game2048::move_down(){                 
     for(int c = 0; c < COLS; c++){
         int topmost = ROWS-1;
         for(int r = ROWS-1; r >= 0; r--){
@@ -184,7 +185,7 @@ int main(){
     srand(time(nullptr));
     Game2048 game = Game2048();
     while(true){
-        system("cls");
+        CLEAR;
         game.display_console();
         char input;
         std::cin >> input;

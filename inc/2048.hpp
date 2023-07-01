@@ -2,6 +2,9 @@
 #define COLS    4
 #define TILES   ROWS*COLS
 #define INDEX(r,c) r*COLS+c
+
+
+
 class Game2048{
     public:
     struct Tile{
