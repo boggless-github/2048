@@ -2,6 +2,7 @@
 #include <random>
 #include <2048.hpp>
 #include <defines.hpp>
+#include <string.h>
 
 void Game2048::restart(){
     // set score to 0
@@ -29,9 +30,9 @@ void Game2048::move_left(){
                 board[INDEX(r,leftmost)].value = value;
             }
             else if(board[INDEX(r,leftmost)].value == value){
-                value *= 2;
+                value += 1;
                 board[INDEX(r,leftmost)].value = value;
-                score += value;
+                score += 1 << value;
                 leftmost++; // prevent double combinations
             } else{
                 leftmost++;
@@ -54,9 +55,9 @@ void Game2048::move_right(){
                 board[INDEX(r,rightmost)].value = value;
             }
             else if(board[INDEX(r,rightmost)].value == value){
-                value *= 2;
+                value += 1;
                 board[INDEX(r,rightmost)].value = value;
-                score += value;
+                score += 1 << value;
                 rightmost--; // prevent double combinations
             } else{
                 rightmost--;
@@ -79,9 +80,9 @@ void Game2048::move_up(){
                 board[INDEX(topmost,c)].value = value;
             }
             else if(board[INDEX(topmost,c)].value == value){
-                value *= 2;
+                value += 1;
                 board[INDEX(topmost,c)].value = value;
-                score += value;
+                score += 1 << value;
                 topmost++; // prevent double combinations
             } else{
                 topmost++;
@@ -104,9 +105,9 @@ void Game2048::move_down(){
                 board[INDEX(topmost,c)].value = value;
             }
             else if(board[INDEX(topmost,c)].value == value){
-                value *= 2;
+                value += 1;
                 board[INDEX(topmost,c)].value = value;
-                score += value;
+                score += 1 << value;
                 topmost--; // prevent double combinations
             } else{
                 topmost--;
@@ -141,9 +142,9 @@ int Game2048::get_score(){
 }
 
 void Game2048::spawn_tile(){ 
-    int value = rand() % 4; // should have 90% chance of 2, 10% chance of 4
-    if(value == 0) value = 4;
-    else value = 2; 
+    int value = rand() % 10; // should have 90% chance of 2, 10% chance of 4
+    if(value == 0) value = 2; // note that value = 2 -> 1 << 2 = 4
+    else value = 1; 
 
     int available = 0;
     for(int i = 0; i < TILES; i++){
@@ -170,15 +171,38 @@ Game2048::Game2048(){
     restart();
 }
 
+const char* const Game2048::Tile::strings[] = {
+    "\033[0m\033[48;5;0m"       "       "   "\033[0m",
+    "\033[0m\033[48;5;1m"       "   2   "   "\033[0m",
+    "\033[0m\033[48;5;2m"       "   4   "   "\033[0m",
+    "\033[0m\033[48;5;3m"       "   8   "   "\033[0m",
+    "\033[0m\033[48;5;11m"      "   16  "   "\033[0m",
+    "\033[0m\033[48;5;10m"      "   32  "   "\033[0m",
+    "\033[0m\033[48;5;9m"       "   64  "   "\033[0m",
+    "\033[0m\033[48;5;196m"     "  128  "   "\033[0m",
+    "\033[0m\033[48;5;201m"     "  256  "   "\033[0m",
+    "\033[0m\033[48;5;21m"      "  512  "   "\033[0m",
+    "\033[0m\033[48;5;28m"      "  1024 "   "\033[0m",
+    "\033[0m\033[48;5;208m"     "  2048 "   "\033[0m",
+    "\033[0m\033[48;5;213m"     "  4096 "   "\033[0m",
+    "\033[0m\033[48;5;33m"      "  8192 "   "\033[0m",
+    "\033[0m\033[48;5;40m"      " 16384 "   "\033[0m",
+    "\033[0m\033[48;5;220m"     " 32768 "   "\033[0m"};
+
 void Game2048::display_console(){
-    std::cout << "2048!!!\t\tScore: " << score << std::endl;
+    char buf[1024];
+    int offset = 0;
+    memset(&buf[0], 0, sizeof(buf));
+    offset += snprintf(&buf[offset], sizeof(buf)-offset, "  %s \tScore: %d\n \033[48;5;8m%30s\033[0m", Tile::strings[11], score, "");
     for(int i = 0; i < ROWS; i++){
-        std::cout << "\n|\t";
+        offset += snprintf(&buf[offset], sizeof(buf)-offset, "\n \033[48;5;8m \033[0m");
         for(int j = 0; j < COLS; j++){
-            std::cout << board[i * COLS + j].value << "|\t";
+            offset += snprintf(&buf[offset], sizeof(buf)-offset, "%7s", Tile::strings[board[i*COLS + j].value]);
         }
+        offset += snprintf(&buf[offset], sizeof(buf)-offset, "\033[48;5;8m \033[0m");
     }
-    std::cout << std::endl << std::endl;
+    offset += snprintf(&buf[offset], sizeof(buf)-offset, "\n \033[48;5;8m%30s\033[0m", "");
+    std::cout << &buf[0] << std::endl << std::endl;
 }
 
 int main(){

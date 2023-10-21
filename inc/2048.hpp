@@ -8,6 +8,7 @@
 class Game2048{
     public:
     struct Tile{
+        static const char* const strings[16];
         int value; // 0 means empty
     };
 
