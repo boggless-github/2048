@@ -10,7 +10,7 @@ endif
 
 # Define compiler and compiler flags
 CC := g++
-CFLAGS := -Wall -Iinc $(foreach define,$(DEFINES),-D$(define))
+CFLAGS := -g -Wall -Iinc $(foreach define,$(DEFINES),-D$(define))
 
 # Define source and object file directories
 SRC_DIR := src
