@@ -1,3 +1,5 @@
+#ifndef SCREEN
+#define SCREEN
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
@@ -50,3 +52,4 @@ class Screen{
     void BiggerBuf();
     void Init();
 };
+#endif

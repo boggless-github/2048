@@ -1,27 +1,28 @@
-#define ROWS    4
-#define COLS    4
-#define TILES   ROWS*COLS
-#define INDEX(r,c) r*COLS+c
+#ifndef GAME2048
+#define GAME2048
 #include <Screen.hpp>
 
 class Game2048{
     public:
-    class Tile{
-        uint32_t flags;
-        uint32_t value;
-        Tile *left, *right, *up, *down;
+    class Tile : public Screen{
+        int value; // 0 means empty
+        static const char *fmts[16];
+        static const char *nums[16];
 
-        void goLeft();
-        void goRight();
-        void goUp();
-        void goDown();
+        public:
+        int GetValue();
+        void SetValue(int value); 
     };
 
-    Screen *parent;
+    Screen screen;
+    Screen board_screen;
     Tile *board;
-    int rows, cols;
+    Tile title;
+
+    bool finish;
 
     int score;
+    int rows, cols;
 
     void restart();
 
@@ -36,7 +37,9 @@ class Game2048{
 
     void spawn_tile();
 
-    Game2048(Screen *parent, int rows, int cols);
+    Game2048(int rows=4, int cols=4);
+    ~Game2048();
 
     void display_console();
 };
+#endif

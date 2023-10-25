@@ -155,16 +155,34 @@ void Screen::Print(){
     Clear();
     Update();
     buf_offset = 0;
-    for (uint32_t i = 0; i < width * height; i++) {
-        buf_offset += snprintf(buf + buf_offset, buf_sz - buf_offset,
-            "%s%c%s", true_fmt[i], true_txt[i], "\033[0m");
-        if (buf_offset >= buf_sz){
-            BiggerBuf();
-            Print();
+    for (uint32_t y = 0; y < height; y++) {
+        for (uint32_t x = 0; x < width; x++) {
+            uint32_t i = GetIndex(x,y);
+            const char* use_fmt = true_fmt[i];
+            buf_offset += snprintf(buf + buf_offset, buf_sz - buf_offset,
+                "%s", use_fmt);
+            if (buf_offset >= buf_sz){
+                BiggerBuf();
+                Print();
+            }
+            uint32_t same_fmt = 1;
+            while (++x < width && true_fmt[GetIndex(x,y)] == use_fmt)
+                same_fmt++;
+            x--;
+            buf_offset += snprintf(buf + buf_offset, buf_sz - buf_offset,
+                "%.*s", same_fmt, &true_txt[i]);
+            // printf("Using %d chars: '%*s'\n", same_fmt, same_fmt, &true_txt[i]);
+            if (buf_offset >= buf_sz){
+                BiggerBuf();
+                Print();
+            }
+            buf_offset += snprintf(buf + buf_offset, buf_sz - buf_offset,
+                "%s", "\033[0m");
+            if (buf_offset >= buf_sz){
+                BiggerBuf();
+                Print();
+            }
         }
-        /* if not on the edge, go next */
-        if ((i+1) % width) continue;
-
         /* add new line*/
         buf_offset += snprintf(buf + buf_offset, buf_sz - buf_offset, "\n");
         if (buf_offset >= buf_sz){
@@ -172,7 +190,7 @@ void Screen::Print(){
             Print();
         }
     };
-    // std::cout << buf;
+    printf("%s", buf);
 };
 
 uint32_t Screen::GetIndex(int x, int y){
